@@ -3,6 +3,10 @@ const { sendMail } = require("../utils/sendEmail");
 const User = require("../models/Users");
 const bcrypt = require('bcryptjs');
 const generateRandomPassword = require("../utils/generatePassword");
+const csvParser = require('csv-parser');
+const fs = require('fs');
+const path = require('path');
+
 
 //@desc Create User
 //@route POST /api/users
@@ -77,6 +81,106 @@ const createUser = asyncHandler(async (req, res) => {
         throw new Error("Invalid user data");
     }
 });
+
+//@desc Create Users from CSV
+//@route POST /api/users/upload
+//@access public
+const createUsersFromCSV = asyncHandler(async (req, res) => {
+    // Check if a file is uploaded
+    if (!req.file) {
+        res.status(400);
+        throw new Error("Please upload a CSV file");
+    }
+
+    // Validate if the uploaded file is of CSV type
+    if (req.file.mimetype !== 'text/csv') {
+        res.status(400);
+        throw new Error("Invalid file format. Please upload a CSV file.");
+    }
+
+    const results = [];
+    const filePath = path.join(__dirname, '../uploads', req.file.filename);
+
+    fs.createReadStream(filePath)
+        .pipe(csvParser())
+        .on('data', (data) => results.push(data))
+        .on('end', async () => {
+            const createdUsers = [];
+            const errors = [];
+
+            for (let row of results) {
+                const { name, email, role } = row;
+
+                // Validation: Check if required fields are present
+                if (!name || !email) {
+                    errors.push({ email, message: "Name and email are mandatory" });
+                    continue;
+                }
+
+                // Check if user already exists
+                const userExists = await User.findOne({ email });
+                if (userExists) {
+                    errors.push({ email, message: "User already exists" });
+                    continue;
+                }
+
+                // Generate a random password and hash it
+                const randomPassword = generateRandomPassword();
+                const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+                // Create the user
+                try {
+                    const user = await User.create({
+                        name,
+                        email,
+                        password: hashedPassword,
+                        role
+                    });
+
+                    createdUsers.push(user);
+
+                    // Send email notification with the generated password
+                    const mailOptions = {
+                        from: process.env.EMAIL,
+                        to: email,
+                        subject: 'Welcome to QzPlatform!',
+                        html: `
+                            <p>Dear ${name},</p>
+                            <p>Welcome to <strong>QzPlatform</strong>!</p>
+                            <p>Your account has been successfully created. To get started, please log in using the temporary password provided below. For your security, we recommend that you change this password immediately after your first login.</p>
+                            <p><strong>Temporary Password:</strong> <code>${randomPassword}</code></p>
+                            <p>If you have any questions or need assistance, please do not hesitate to contact our support team.</p>
+                            <p>Best regards,<br><strong>The QzPlatform Team</strong></p>
+                        `
+                    };
+
+                    await sendMail(mailOptions);
+                } catch (err) {
+                    errors.push({ email, message: `Error creating user: ${err.message}` });
+                }
+            }
+
+            // Clean up: Delete the uploaded CSV file after processing
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                }
+            });
+
+            // Respond with the result
+            res.status(201).json({
+                message: "Users created successfully from CSV",
+                createdUsers,
+                errors
+            });
+        })
+        .on('error', (err) => {
+            res.status(500);
+            throw new Error(`Error processing CSV file: ${err.message}`);
+        });
+});
+
+
 
 //@desc Get all Users
 //@route GET /api/users
@@ -167,6 +271,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 module.exports = {
     createUser,
+    createUsersFromCSV,
     getUsers,
     getUser,
     updateUser,
