@@ -1,22 +1,47 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/Users');
+const User = require('../models/Users'); // Import the User model
 
-exports.protect = async (req, res, next) => {
-    let token;
+// Token verification middleware
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
+  if (token == null) {
+    return res.status(401).json({ message: 'Token is required' });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Fetch the full user details from the database using the ID in the token payload
+    const user = await User.findById(decoded.id).select('-password'); // Exclude password
+
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
     }
 
-    if (!token) {
-        return res.status(401).json({ message: 'Not authorized, no token' });
-    }
+    // Attach the user object to the request
+    req.user = user;
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded.id).select('-password');
-        next();
-    } catch (error) {
-        res.status(401).json({ message: 'Not authorized, token failed' });
+    // Proceed to the next middleware
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid token' });
+  }
+};
+
+// Role-based access control
+const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'You do not have permission to perform this action' });
     }
+    next();
+  };
+};
+
+module.exports = {
+  authenticateToken,
+  authorizeRoles,
 };
