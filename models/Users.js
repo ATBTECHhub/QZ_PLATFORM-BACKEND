@@ -19,6 +19,12 @@ const UserSchema = new mongoose.Schema({
     enum: ['admin', 'testCreator', 'testTaker'],
     default: 'testTaker',
   },
+  isActive: {type: Boolean, default: true},
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // References the testCreator
+    required: false,
+  },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
 }, { timestamps: true });
