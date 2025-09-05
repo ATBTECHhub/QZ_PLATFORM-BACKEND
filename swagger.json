@@ -1,0 +1,13 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "QzPlatform API",
+      "description": "API documentation for QzPlatform backend"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "schemes": ["http"],
+    "paths": {}
+  }
+  

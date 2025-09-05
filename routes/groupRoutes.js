@@ -10,7 +10,8 @@ const {
 
 const router = express.Router();
 
-// Create a new group
+//@Route /api/groups
+//@Desc Create a new group
 router.post('/', createGroup);
 
 // Get all groups

@@ -91,7 +91,7 @@ To set up the project locally, follow these steps:
    ```
 
 ## Usage
-After installation, you can access the platform at http://localhost:3000 and start using the features as an Admin, Test Creator, or Test Taker.
+After installation, you can access the platform at (https://qz-platform-backend-1.onrender.com) and start using the features as an Admin, Test Creator, or Test Taker.
 
 ## API Documentation
 Comprehensive API documentation is available to guide you through the available endpoints and their usage. You can access the API documentation by navigating to http://localhost:3000/api-docs once the backend server is running.
