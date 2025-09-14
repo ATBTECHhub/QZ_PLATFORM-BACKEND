@@ -7,6 +7,7 @@ export interface IUser extends Document {
     password: string;
     role: 'admin' | 'testCreator' | 'testTaker';
     isActive: boolean;
+    isVerified: boolean;
     createdBy?: mongoose.Types.ObjectId;
     resetPasswordToken?: string;
     resetPasswordExpires?: Date;

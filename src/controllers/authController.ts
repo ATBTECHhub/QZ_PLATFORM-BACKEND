@@ -23,8 +23,11 @@ export class AuthController {
     async (req: Request, res: Response): Promise<void> => {
       try {
         const userData: RegisterInput = req.body;
-        await AuthService.register(userData);
-        res.status(201).json({ message: 'User registered successfully' });
+       const {token, firstName} = await AuthService.register(userData);
+        res.status(201).json({ message: 'User registered successfully',
+          token: token,
+          firstName: firstName
+         });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Registration failed';
         const status = message.includes('already exists') ? 400 : 500;

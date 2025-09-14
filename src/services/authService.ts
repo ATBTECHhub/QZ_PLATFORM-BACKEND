@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import {
@@ -17,7 +17,7 @@ import settings from '../config/settings'
 
 export class AuthService {
   // User registration
-  static async register(userData: RegisterInput): Promise<void> {
+  static async register(userData: RegisterInput): Promise<token, firstName> {
     const { name, email, password, role } = userData;
 
     // Check if user already exists
@@ -26,18 +26,31 @@ export class AuthService {
       throw new Error('User already exists');
     }
 
-    // Hash Password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // // Hash Password
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       role,
     });
+    
+     // Generate a token with the user's id and role
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      settings.JWT_SECRET,
+      {
+        expiresIn: '7d',
+      }
+    );
+
+    const verifyToken = 
 
     const firstName = user.name.split(' ')[0];
+    
+    
 
     // Send registration email
     await sendMail({
@@ -46,11 +59,16 @@ export class AuthService {
       subject: 'Welcome to QzPlatform!',
       html: registrationMailTemplate(firstName, user.role),
     });
+
+    return {
+      token,
+      firstName
+    };
   }
 
   // User login
   static async login(loginData: LoginInput): Promise<{ token: string; firstname: string }> {
-    const { email, password, role, keepMeSignedIn } = loginData;
+    const { email, password, role} = loginData;
 
     // Find the user by email and role
     const user = await User.findOne({ email, role });
@@ -74,7 +92,7 @@ export class AuthService {
       { id: user._id, role: user.role },
       settings.JWT_SECRET!,
       {
-        expiresIn: keepMeSignedIn ? '7d' : '1h',
+        expiresIn: '7d',
       }
     );
 
