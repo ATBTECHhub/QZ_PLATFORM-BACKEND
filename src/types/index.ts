@@ -19,6 +19,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: IUser & Document;
+      userId: string;
     }
   }
 }
@@ -41,4 +42,12 @@ export interface tokenResponse {
   expiresIn: string
 
 }
+
+export interface tokenParam {
+  token: string
+}
+
+export interface RegisterResponse {
+  token: string;
+  firstName: string;
 }

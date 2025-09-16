@@ -1,46 +1,44 @@
 import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
+import { ZodError, ZodObject, ZodRawShape } from 'zod';
 
-export const validate = (schema: AnyZodObject) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+// Middleware to validate request body
+export const validate =
+  (schema: ZodObject<ZodRawShape>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // ✅ Change this line - validate req.body directly
-      await schema.parseAsync(req.body);
+      await schema.parseAsync(req.body); // Validate request body
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errors = error.errors.map(err => ({
+        const errors = error.issues.map((err) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
 
-        res.status(400).json({ message: 'Validation failed', errors });
-      } else {
-        res.status(400).json({ message: 'Invalid request data' });
+        return res.status(400).json({ message: 'Validation failed', errors });
       }
+      next(error);
     }
   };
-};
 
-// Add this for params validation
-export const validateParams = (schema: AnyZodObject) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+// Middleware to validate request params
+export const validateParams =
+  (schema: ZodObject<ZodRawShape>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await schema.parseAsync(req.params);
+      await schema.parseAsync(req.params); // Validate request params
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errors = error.errors.map(err => ({
+        const errors = error.issues.map((err) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
 
-        res.status(400).json({ message: 'Validation failed', errors });
-      } else {
-        res.status(400).json({ message: 'Invalid request parameters' });
+        return res
+          .status(400)
+          .json({ message: 'Validation failed', errors });
       }
+      next(error);
     }
   };
-};
-
-export default validate;

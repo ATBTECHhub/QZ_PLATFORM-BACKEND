@@ -9,15 +9,17 @@ import { sendMail } from '../utils/sendEmail';
 import User from '../models/Users';
 import {
   RegisterInput,
+  TokenParam,
   LoginInput,
   ForgotPasswordInput,
   ChangePasswordInput,
-} from '../schemas/authSchemas';
+} from '../Schemas/authSchemas';
 import settings from '../config/settings';
+import {RegisterResponse, CustomJwtPayload} from '../types/index'
 
 export class AuthService {
   // User registration
-  static async register(userData: RegisterInput): Promise<token, firstName> {
+  static async register(userData: RegisterInput): Promise<RegisterResponse> {
     const { name, email, password, role } = userData;
 
     // Check if user already exists
@@ -54,7 +56,7 @@ export class AuthService {
     await sendMail({
       to: user.email,
       subject: 'Welcome to QzPlatform!',
-      html: registrationMailTemplate(firstName, user.role),
+      html: registrationMailTemplate(firstName, user.role, verifyUrl),
     });
 
     return {
@@ -66,10 +68,14 @@ export class AuthService {
   static async verifyEmail(token: string){
     try{
       //Decode token
-      const decoded = jwt.verify(token, settings.JWT_SECRET);
+      const decoded = jwt.verify(token, settings.JWT_SECRET) as CustomJwtPayload;
+      if (!decoded || typeof decoded === 'string') {
+        throw new Error('Invalid token');
+      }
 
       //Finding user:
       const user = await User.findById(decoded.id);
+
       if (!user) {
         throw new Error("User not found");
       }

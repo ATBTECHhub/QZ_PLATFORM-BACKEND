@@ -1,23 +1,7 @@
-// Reusable banner, header, and footer functions
-
-const banner = () => `
-    <div style="text-align: center; margin-bottom: 20px;">
-        <img src="https://res.cloudinary.com/dkceyr7qe/image/upload/v1729232379/mailbanner_impl0x.png" alt="QzPlatform" style="width: 100%; max-width: 600px;">
-    </div>
-`;
-
-const footer = () => `
-    <div style="text-align: center; margin-top: 20px;">
-        <p style="color: #999; font-size: 12px;">QzPlatform &copy; 2024 | All rights reserved</p>
-    </div>
-`;
-
-const header = title => `
-    <h2 style="color: #2d9cdb; text-align: center;">${title}</h2>
-`;
+import { banner, footer, header} from './emailTemplate'
 
 // Registration email template
-const registrationMailTemplate = (firstName, userRole, verifyUrl) => `
+export const registrationMailTemplate = (firstName: string, userRole: string, verifyUrl:string): string => `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
         <!-- Banner -->
         ${banner()}
@@ -59,7 +43,7 @@ const registrationMailTemplate = (firstName, userRole, verifyUrl) => `
 `;
 
 // Forgot password email template
-const forgotPasswordMailTemplate = (firstName, resetPasswordUrl) => `
+export const forgotPasswordMailTemplate = (firstName: string, resetPasswordUrl: string): string => `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
         <!-- Banner -->
         ${banner()}
@@ -88,7 +72,3 @@ const forgotPasswordMailTemplate = (firstName, resetPasswordUrl) => `
     </div>
 `;
 
-module.exports = {
-  registrationMailTemplate,
-  forgotPasswordMailTemplate,
-};

@@ -1,23 +1,7 @@
-// Reusable banner, header, and footer functions
-
-const banner = () => `
-    <div style="text-align: center; margin-bottom: 20px;">
-        <img src="https://res.cloudinary.com/dkceyr7qe/image/upload/v1729232379/mailbanner_impl0x.png" alt="QzPlatform" style="width: 100%; max-width: 600px;">
-    </div>
-`;
-
-const footer = () => `
-    <div style="text-align: center; margin-top: 20px;">
-        <p style="color: #999; font-size: 12px;">QzPlatform &copy; 2024 | All rights reserved</p>
-    </div>
-`;
-
-const header = title => `
-    <h2 style="color: #2d9cdb; text-align: center;">${title}</h2>
-`;
+import { banner, footer, header } from './emailTemplate'
 
 //User Creation Mail Template
-const userCreationMailTemplate = (name, randomPassword) => `
+const userCreationMailTemplate = (name: string, randomPassword: string): string=> `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
         <!-- Banner -->
         ${banner()}
@@ -45,7 +29,7 @@ const userCreationMailTemplate = (name, randomPassword) => `
 `;
 
 //User Creation Using CSV Mail Template
-const csvUserCreationMailTemplate = (name, randomPassword) => `
+const csvUserCreationMailTemplate = (name: string, randomPassword: string): string => `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
         <!-- Banner -->
         ${banner()}
@@ -72,7 +56,7 @@ const csvUserCreationMailTemplate = (name, randomPassword) => `
 `;
 
 // User Update Mail Template
-const userUpdateMailTemplate = name => `
+const userUpdateMailTemplate = (name:string):string => `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
         <!-- Banner -->
         ${banner()}

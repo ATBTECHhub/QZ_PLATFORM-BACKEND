@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/Users'; // Import User model
 import { IUser } from '../types';
-import { CustomjwtPayload } from '../types/index';
+import { CustomJwtPayload } from '../types/index';
 
 // Token verification middleware
 export const authenticateToken = async (

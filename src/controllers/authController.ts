@@ -11,8 +11,13 @@ import {
   ForgotPasswordInput,
   ChangePasswordInput,
   TokenParam,
-} from '../schemas/authSchemas';
+} from '../Schemas/authSchemas';
+//import { tokenParam } from '../types/index'
 import { validate } from '../middlewares/validationMiddleware';
+
+interface TokenParem {
+  token: string
+}
 
 export class AuthController {
   // @Desc Registration for users
@@ -42,7 +47,7 @@ export class AuthController {
 
   static verifyEmail = async(req: Request, res: Response) => {
     try {
-      const { token } = req.query;
+      const { token } = req.query as unknown as TokenParem;
 
       if (!token || typeof token != 'string') {
         return res.status(400).json({ message: "Verification token is required"})
@@ -108,7 +113,7 @@ export class AuthController {
     validate(tokenParamSchema),
     async (req: Request, res: Response): Promise<void> => {
       try {
-        const { token }: TokenParam = req.params;
+        const { token }: TokenParam = req.params as unknown as TokenParem;
         const changePasswordData: ChangePasswordInput = req.body;
         await AuthService.changePassword(token, changePasswordData);
         res.status(200).json({ message: 'Password changed successfully' });
