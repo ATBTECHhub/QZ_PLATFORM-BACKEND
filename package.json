@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
     "lint": "eslint src/**/*.{js,ts} --quiet",
     "lint:fix": "eslint 'src/**/*.{js,ts}' --quiet --fix",
     "format": "prettier --check 'src/**/*.{js,ts,json,md}'",
