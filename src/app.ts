@@ -44,15 +44,15 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Middleware to strip /api prefix - MUST COME BEFORE ROUTES
-app.use((req, res, next) => {
-  console.log('Original URL:', req.url); // Debug logging
-  if (req.url.startsWith('/api/')) {
-    req.url = req.url.substring(4); // Remove '/api'
-    console.log('Rewritten URL:', req.url); // Debug logging
-  }
-  next();
-});
+// // Middleware to strip /api prefix - MUST COME BEFORE ROUTES
+// app.use((req, res, next) => {
+//   console.log('Original URL:', req.url); // Debug logging
+//   if (req.url.startsWith('/api/')) {
+//     req.url = req.url.substring(4); // Remove '/api'
+//     console.log('Rewritten URL:', req.url); // Debug logging
+//   }
+//   next();
+// });
 
 // Routes - NOW MOUNTED WITHOUT /api PREFIX
 app.use('/api/users', require('./routes/userRoutes'));
