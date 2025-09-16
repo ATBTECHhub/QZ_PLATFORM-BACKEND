@@ -32,3 +32,13 @@ export interface JwtPayload {
 export interface CustomJwtPayload extends JwtPayload {
   userId: string;
 }
+
+
+export interface tokenResponse {
+  accessToken: string,
+  refreshToken: string,
+  firstName: string,
+  expiresIn: string
+
+}
+}

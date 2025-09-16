@@ -76,6 +76,7 @@ export class AuthService {
 
       //Update Verification Status
       user.isVerified = true;
+      user.isActive = true;
       await user.save();
 
       //Generate login token (for immediate login after verification)
@@ -101,6 +102,11 @@ export class AuthService {
     const user = await User.findOne({ email, role });
     if (!user) {
       throw new Error('Invalid credentials');
+    }
+
+    //Check if Email of user is verified 
+    if(!user.isVerified){
+      throw new Error("Unverified Email. Kindly Verify")
     }
 
     // Check if the user is active
