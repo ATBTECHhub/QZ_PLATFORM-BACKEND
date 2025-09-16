@@ -4,7 +4,7 @@ import errorHandler from './middlewares/errorHandler';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
-import authRoutes from './routes/authRoutes'
+import authRoutes from './routes/authRoutes';
 
 // Create Express app
 const app = express();
@@ -58,6 +58,5 @@ app.use('/api/waitlist', require('./routes/waitlistRoutes'));
 
 // Error Handler
 app.use(errorHandler);
-
 
 export default app;

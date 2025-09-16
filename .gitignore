@@ -2,3 +2,35 @@
 node_modules
 Learning
 
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files
+.env
+.env.*
+!.env.example   # Keep a safe template if needed
+
+# Build output
+dist/
+build/
+coverage/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+
+# IDE / OS specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

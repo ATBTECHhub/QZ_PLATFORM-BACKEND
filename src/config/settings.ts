@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import path from 'path'; // ← Add this import
 import { cleanEnv, str, port } from 'envalid';
 
@@ -6,9 +6,8 @@ import { cleanEnv, str, port } from 'envalid';
 const nodeEnv = process.env.NODE_ENV || 'development';
 
 // Determine which .env file to load
-const envFile = nodeEnv === 'production' 
-  ? '.env.production' 
-  : '.env.development';
+const envFile =
+  nodeEnv === 'production' ? '.env.production' : '.env.development';
 // Load the specific environment file
 dotenv.config({ path: path.resolve(process.cwd(), envFile) });
 
@@ -20,9 +19,11 @@ const settings = cleanEnv(process.env, {
   SMTP_PORT: port(),
   USER_EMAIL: str(),
   SMTP_PASSWORD: str(),
+  BREVO_API_KEY: str(),
   JWT_SECRET: str(),
   JWT_EXPIRES: str(),
   BASE_URL: str(),
+  FRONTEND_URL: str()
 });
 
 console.log(`✅ Loaded environment: ${settings.NODE_ENV}`);

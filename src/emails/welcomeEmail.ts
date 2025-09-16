@@ -17,7 +17,7 @@ const header = title => `
 `;
 
 // Registration email template
-const registrationMailTemplate = (firstName, userRole) => `
+const registrationMailTemplate = (firstName, userRole, verifyUrl) => `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
         <!-- Banner -->
         ${banner()}
@@ -25,22 +25,36 @@ const registrationMailTemplate = (firstName, userRole) => `
         <!-- Email Body -->
         <div style="background-color: #f7f7f7; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
             ${header('Welcome to QzPlatform!')}
-            <p>Dear ${firstName},</p>
+        <p>Dear ${firstName},</p>
 
-            <p>We are thrilled to have you join our community as a <strong>${userRole}</strong>. Your registration was successful, and you are now ready to explore all the features and tools we offer to help you create engaging and effective assessments.</p>
+        <p>We are thrilled to have you join our community as a <strong>${userRole}</strong>! Your registration was successful 🎉.</p>
 
-            <p>To get started, please log in to your account using your registered email address. We encourage you to take a moment to familiarize yourself with the platform, set up your profile, and begin creating your first test.</p>
+        <p>Before you can start exploring all the features and tools we offer, please verify your email address to activate your account.</p>
 
-            <p>If you have any questions or need assistance, our support team is here to help. Do not hesitate to reach out to us at any time.</p>
-
-            <p>Thank you for choosing QzPlatform. We look forward to supporting you on your journey to create impactful assessments!</p>
-
-            <p>Best regards,<br>
-            <strong>The QzPlatform Team</strong></p>
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${verifyUrl}"
+                style="background-color:#4CAF50;
+                color:white;
+                padding:12px 24px;
+                text-decoration:none;
+                border-radius:8px;
+                font-weight:bold;
+                display:inline-block;">
+                    Verify My Account
+            </a>
         </div>
 
+        <p>Once verified, you’ll be able to log in with your registered email address, set up your profile, and begin creating engaging assessments right away.</p>
+
+        <p>If you have any questions or need assistance, our support team is here to help. Don’t hesitate to reach out to us at any time.</p>
+
+        <p>Thank you for choosing QzPlatform. We look forward to supporting you on your journey to create impactful assessments!</p>
+
+        <p>Best regards,<br>
+        <strong>The QzPlatform Team</strong></p>
+        </div>
         <!-- Footer -->
-        ${footer()}
+            ${footer()}
     </div>
 `;
 

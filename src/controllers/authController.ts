@@ -23,18 +23,42 @@ export class AuthController {
     async (req: Request, res: Response): Promise<void> => {
       try {
         const userData: RegisterInput = req.body;
-       const {token, firstName} = await AuthService.register(userData);
-        res.status(201).json({ message: 'User registered successfully',
-          token: token,
-          firstName: firstName
-         });
+        const { token, firstName } = await AuthService.register(userData);
+        res
+          .status(201)
+          .json({
+            message: 'User registered successfully',
+            token: token,
+            firstName: firstName,
+          });
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Registration failed';
+        const message =
+          error instanceof Error ? error.message : 'Registration failed';
         const status = message.includes('already exists') ? 400 : 500;
         res.status(status).json({ message });
       }
-    }
+    },
   ];
+
+  static verifyEmail = async(req: Request, res: Response) => {
+    try {
+      const { token } = req.query;
+
+      if (!token || typeof token != 'string') {
+        return res.status(400).json({ message: "Verification token is required"})
+      }
+
+      const { loginToken, firstName} = await AuthService.verifyEmail(token);
+
+      res.status(200).json({
+        message: "Email verified successfully",
+        token: loginToken,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message: "Verification failed";
+      res.status(400).json({ message })
+    }
+  };
 
   // @Desc Login
   // @Route POST /api/auths/login
@@ -48,11 +72,14 @@ export class AuthController {
         res.status(200).json(result);
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Login failed';
-        const status = message.includes('Invalid credentials') ? 400 : 
-                      message.includes('deactivated') ? 403 : 500;
+        const status = message.includes('Invalid credentials')
+          ? 400
+          : message.includes('deactivated')
+            ? 403
+            : 500;
         res.status(status).json({ message });
       }
-    }
+    },
   ];
 
   // @Desc Forgot Password
@@ -66,10 +93,11 @@ export class AuthController {
         await AuthService.forgotPassword(forgotPasswordData);
         res.status(200).json({ message: 'Reset password link sent' });
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Password reset failed';
+        const message =
+          error instanceof Error ? error.message : 'Password reset failed';
         res.status(500).json({ message });
       }
-    }
+    },
   ];
 
   // @Desc Change Password
@@ -85,11 +113,12 @@ export class AuthController {
         await AuthService.changePassword(token, changePasswordData);
         res.status(200).json({ message: 'Password changed successfully' });
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Password change failed';
+        const message =
+          error instanceof Error ? error.message : 'Password change failed';
         const status = message.includes('Invalid or expired token') ? 400 : 500;
         res.status(status).json({ message });
       }
-    }
+    },
   ];
 }
 
@@ -98,3 +127,4 @@ export const register = AuthController.register;
 export const login = AuthController.login;
 export const forgotPassword = AuthController.forgotPassword;
 export const changePassword = AuthController.changePassword;
+export const verifyEmail = AuthController.verifyEmail;

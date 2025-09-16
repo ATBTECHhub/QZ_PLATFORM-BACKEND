@@ -13,7 +13,7 @@ import {
   ForgotPasswordInput,
   ChangePasswordInput,
 } from '../schemas/authSchemas';
-import settings from '../config/settings'
+import settings from '../config/settings';
 
 export class AuthService {
   // User registration
@@ -36,39 +36,66 @@ export class AuthService {
       password,
       role,
     });
-    
-     // Generate a token with the user's id and role
-    const token = jwt.sign(
+
+    // Generate a token with the user's id and role
+    const verificationToken = jwt.sign(
       { id: user._id, role: user.role },
       settings.JWT_SECRET,
       {
         expiresIn: '7d',
       }
     );
-
-    const verifyToken = 
+    //Creating a Verification URL based on token Generated
+    const verifyUrl = `${settings.FRONTEND_URL}/verify-email/token=${verificationToken}`;
 
     const firstName = user.name.split(' ')[0];
-    
-    
 
     // Send registration email
     await sendMail({
-      from: settings.USER_EMAIL,
       to: user.email,
       subject: 'Welcome to QzPlatform!',
       html: registrationMailTemplate(firstName, user.role),
     });
 
     return {
-      token,
-      firstName
+      token: verificationToken,
+      firstName,
     };
   }
 
+  static async verifyEmail(token: string){
+    try{
+      //Decode token
+      const decoded = jwt.verify(token, settings.JWT_SECRET);
+
+      //Finding user:
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      //Update Verification Status
+      user.isVerified = true;
+      await user.save();
+
+      //Generate login token (for immediate login after verification)
+      const loginToken = jwt.sign(
+        {id: user._id, role: user.role},
+        settings.JWT_SECRET, 
+        { expiresIn: '7d'}
+      );
+
+      return { loginToken, firstName: user.name.split(" ")[0]};
+    } catch (err) {
+      throw new Error("Invalid or expired verification link");
+    }
+  }
+
   // User login
-  static async login(loginData: LoginInput): Promise<{ token: string; firstname: string }> {
-    const { email, password, role} = loginData;
+  static async login(
+    loginData: LoginInput
+  ): Promise<{ token: string; firstname: string }> {
+    const { email, password, role } = loginData;
 
     // Find the user by email and role
     const user = await User.findOne({ email, role });
@@ -92,7 +119,7 @@ export class AuthService {
       { id: user._id, role: user.role },
       settings.JWT_SECRET!,
       {
-        expiresIn: '7d',
+        expiresIn: '1h',
       }
     );
 
@@ -103,7 +130,9 @@ export class AuthService {
   }
 
   // Forgot Password
-  static async forgotPassword(forgotPasswordData: ForgotPasswordInput): Promise<void> {
+  static async forgotPassword(
+    forgotPasswordData: ForgotPasswordInput
+  ): Promise<void> {
     const { email } = forgotPasswordData;
     const user = await User.findOne({ email });
 
@@ -123,7 +152,6 @@ export class AuthService {
 
     // Send reset password email
     await sendMail({
-      from: process.env.EMAIL!,
       to: user.email,
       subject: 'Password Reset Request - QzPlatform',
       html: forgotPasswordMailTemplate(firstName, resetPasswordUrl),

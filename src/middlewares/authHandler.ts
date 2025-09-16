@@ -20,7 +20,10 @@ export const authenticateToken = async (
 
   try {
     // Verify the token with type assertion
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as CustomJwtPayload;
 
     // Fetch the full user details from the database
     const user = await User.findById(decoded.id).select('-password');

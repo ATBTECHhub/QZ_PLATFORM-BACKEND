@@ -9,7 +9,7 @@ export const authenticateToken = (
 ): void => {
   // Get token from header
   const token = req.header('Authorization');
-  
+
   // Check if token doesn't exist
   if (!token) {
     res.status(401).json({ message: 'No token, authorization denied' });
@@ -25,7 +25,7 @@ export const authenticateToken = (
 
     // Add userId to request object
     req.userId = decoded.userId;
-    
+
     // Proceed to next middleware
     next();
   } catch (err) {

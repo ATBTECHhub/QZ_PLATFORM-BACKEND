@@ -9,11 +9,11 @@ export const validate = (schema: AnyZodObject) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errors = error.errors.map((err) => ({
+        const errors = error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message,
         }));
-        
+
         res.status(400).json({ message: 'Validation failed', errors });
       } else {
         res.status(400).json({ message: 'Invalid request data' });
@@ -30,11 +30,11 @@ export const validateParams = (schema: AnyZodObject) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errors = error.errors.map((err) => ({
+        const errors = error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message,
         }));
-        
+
         res.status(400).json({ message: 'Validation failed', errors });
       } else {
         res.status(400).json({ message: 'Invalid request parameters' });
