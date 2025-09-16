@@ -55,16 +55,16 @@ app.use((req, res, next) => {
 });
 
 // Routes - NOW MOUNTED WITHOUT /api PREFIX
-app.use('/users', require('./routes/userRoutes'));
-app.use('/groups', require('./routes/groupRoutes'));
-app.use('/auths', authRoutes);
-app.use('/tests/:testId/questions', require('./routes/questionRoutes'));
-app.use('/tests', require('./routes/testRoutes'));
-app.use('/questions', require('./routes/questionBankRoutes'));
-app.use('/tests/administer', require('./routes/administerRoutes'));
-app.use('/dashboard', require('./routes/dashboardRoutes'));
-app.use('/superadmin', require('./routes/superAdminRoutes'));
-app.use('/waitlist', require('./routes/waitlistRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/groups', require('./routes/groupRoutes'));
+app.use('/api/auths', authRoutes);
+app.use('/api/tests/:testId/questions', require('./routes/questionRoutes'));
+app.use('/api/tests', require('./routes/testRoutes'));
+app.use('/api/questions', require('./routes/questionBankRoutes'));
+app.use('/api/tests/administer', require('./routes/administerRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/superadmin', require('./routes/superAdminRoutes'));
+app.use('/api/waitlist', require('./routes/waitlistRoutes'));
 
 // Error Handler
 app.use(errorHandler);
