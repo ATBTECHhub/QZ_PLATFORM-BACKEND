@@ -44,31 +44,28 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Middleware to conditionally strip /api prefix
+// Middleware to strip /api prefix - MUST COME BEFORE ROUTES
 app.use((req, res, next) => {
-  const isRender = process.env.RENDER === 'true';
-  
-  console.log(`Running on Render: ${isRender}, Original URL: ${req.url}`);
-  
-  // Only strip /api prefix if we're on Render
-  if (isRender && req.url.startsWith('/api/')) {
+  console.log('Original URL:', req.url); // Debug logging
+  if (req.url.startsWith('/api/')) {
     req.url = req.url.substring(4); // Remove '/api'
-    console.log('Rewritten URL for Render:', req.url);
+    console.log('Rewritten URL:', req.url); // Debug logging
   }
   next();
 });
 
-// Keep your routes with /api prefix (works for both environments)
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/groups', require('./routes/groupRoutes'));
-app.use('/api/auths', authRoutes);
-app.use('/api/tests/:testId/questions', require('./routes/questionRoutes'));
-app.use('/api/tests', require('./routes/testRoutes'));
-app.use('/api/questions', require('./routes/questionBankRoutes'));
-app.use('/api/tests/administer', require('./routes/administerRoutes'));
-app.use('/api/dashboard', require('./routes/dashboardRoutes'));
-app.use('/api/superadmin', require('./routes/superAdminRoutes'));
-app.use('/api/waitlist', require('./routes/waitlistRoutes'));
+// Routes - NOW MOUNTED WITHOUT /api PREFIX
+app.use('/users', require('./routes/userRoutes'));
+app.use('/groups', require('./routes/groupRoutes'));
+app.use('/auths', authRoutes);
+app.use('/tests/:testId/questions', require('./routes/questionRoutes'));
+app.use('/tests', require('./routes/testRoutes'));
+app.use('/questions', require('./routes/questionBankRoutes'));
+app.use('/tests/administer', require('./routes/administerRoutes'));
+app.use('/dashboard', require('./routes/dashboardRoutes'));
+app.use('/superadmin', require('./routes/superAdminRoutes'));
+app.use('/waitlist', require('./routes/waitlistRoutes'));
+
 // Error Handler
 app.use(errorHandler);
 
